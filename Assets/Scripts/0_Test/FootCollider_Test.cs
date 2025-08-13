@@ -34,7 +34,7 @@ public class FootCollider_Test : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (colliders.Contains(other))
+        if (!colliders.Contains(other))
         {
             colliders.Add(other);
             FlagGrounded();

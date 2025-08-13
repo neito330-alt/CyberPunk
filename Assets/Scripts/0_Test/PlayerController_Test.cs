@@ -7,9 +7,14 @@ public class PlayerController_Test : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
 
     [SerializeField] private BodyCollider_Test bodyColliderTest;
+    [SerializeField] private FootCollider_Test footColliderTest;
     [SerializeField] private float speed = 5f;
 
     [SerializeField] private float jumpForce = 5f;
+
+    [SerializeField] private bool jumpFlag = false;
+
+    [SerializeField] private bool isCanDoubleJump = false;
 
     [SerializeField] private float gravityScale = 1f;
 
@@ -17,6 +22,9 @@ public class PlayerController_Test : MonoBehaviour
 
     [SerializeField] private float ySpeed = 0f;
     // Start is called before the first frame update
+
+
+    [SerializeField] public Vector2 animSpeed = Vector2.zero;
     void Start()
     {
         
@@ -26,7 +34,20 @@ public class PlayerController_Test : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump"))
         {
-            ySpeed = jumpForce; // Apply jump force
+            if (footColliderTest.IsGrounded)
+            {
+                jumpFlag = true;
+                isCanDoubleJump = true; // Allow double jump after jumping from the ground
+            }
+            else if (isCanDoubleJump)
+            {
+                jumpFlag = true;
+                isCanDoubleJump = false; // Disable double jump after using it
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            GetComponent<Animator>().SetTrigger("Event1");
         }
     }
 
@@ -45,13 +66,34 @@ public class PlayerController_Test : MonoBehaviour
         }
         velocity += bodyColliderTest.speed;
 
-        ySpeed -= gravityScale * Time.fixedDeltaTime;
-        if (ySpeed < gravityLimit)
+        if (jumpFlag)
         {
-            ySpeed = gravityLimit;
+            ySpeed = jumpForce;
+            jumpFlag = false;
         }
-
+        else
+        {
+                if (footColliderTest.IsGrounded)
+            {
+                ySpeed = 0f; // Reset vertical speed when grounded
+            }
+            else
+            {
+                ySpeed -= gravityScale * Time.fixedDeltaTime; // Apply gravity
+                if (ySpeed < gravityLimit)
+                {
+                    ySpeed = gravityLimit;
+                }
+                
+            }
+        }
         velocity += new Vector2(0, ySpeed);
+
+        velocity += animSpeed;
+
+        
+
+        
 
         //rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
 

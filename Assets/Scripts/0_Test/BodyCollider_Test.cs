@@ -44,35 +44,16 @@ public class BodyCollider_Test : MonoBehaviour
 
 
     private void OnTriggerEnter2D(Collider2D other){
-        Debug.Log(gameObject.name + "-OnTriggerEnter2D: " + other.name);
-        if (colliders.Contains(other))
-        {
-            return; // Avoid adding the same collider multiple times
-        }
-        if (other == null)
-        {
-            return; // Avoid null references
-        }
-        if (other.gameObject == gameObject)
-        {
-            return; // Avoid adding self
-        }
         if (other.gameObject.tag == "BodyInnerCollider")
         {
-            colliders.Add(other);
+            colliders.Add(other.transform.GetComponent<BodyInnerCollider_Test>().col);
         }
-        
     }
 
     private void OnTriggerExit2D(Collider2D other){
-        Debug.Log(gameObject.name + "-OnTriggerExit2D: " + other.name);
-        if (colliders.Contains(other))
+        if (other.gameObject.tag == "BodyOuterCollider" && colliders.Contains(other))
         {
             colliders.Remove(other);
-        }
-        else
-        {
-            Debug.LogWarning("Collider not found in the list: " + other.name);
         }
     }
 }
