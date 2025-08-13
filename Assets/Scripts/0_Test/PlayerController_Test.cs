@@ -6,6 +6,8 @@ public class PlayerController_Test : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rb;
 
+    [SerializeField] private bool isInverse = false;
+
     [SerializeField] private BodyCollider_Test bodyColliderTest;
     [SerializeField] private FootCollider_Test footColliderTest;
     [SerializeField] private float speed = 5f;
@@ -45,7 +47,7 @@ public class PlayerController_Test : MonoBehaviour
                 isCanDoubleJump = false; // Disable double jump after using it
             }
         }
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetButtonDown("Fire1"))
         {
             GetComponent<Animator>().SetTrigger("Event1");
         }
@@ -56,6 +58,11 @@ public class PlayerController_Test : MonoBehaviour
     {
         int x_val = Input.GetAxisRaw("Horizontal") > 0 ? 1 : Input.GetAxisRaw("Horizontal") < 0 ? -1 : 0;
         //int y_val = Input.GetAxisRaw("Vertical") > 0 ? 1 : Input.GetAxisRaw("Vertical") < 0 ? -1 : 0;
+
+        int x_dir = x_val > 0 ? 1 : x_val < 0 ? -1 : (isInverse ? -1 : 1);
+        isInverse = x_dir < 0;
+
+        transform.localScale = new Vector3(x_dir, 1, 1);
 
         
 
@@ -89,7 +96,7 @@ public class PlayerController_Test : MonoBehaviour
         }
         velocity += new Vector2(0, ySpeed);
 
-        velocity += animSpeed;
+        velocity += animSpeed * new Vector2(x_dir,1);
 
         
 
